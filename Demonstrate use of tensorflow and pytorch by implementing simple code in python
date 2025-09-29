@@ -5,7 +5,7 @@ import numpy as np
 X = np.array([1, 2, 3, 4, 5], dtype=float)
 Y = np.array([3, 5, 7, 9, 11], dtype=float)
 
-# Build a simple model
+# Build a simple Sequential model
 model = tf.keras.Sequential([
     tf.keras.layers.Dense(units=1, input_shape=[1])
 ])
@@ -16,8 +16,9 @@ model.compile(optimizer='sgd', loss='mean_squared_error')
 # Train the model
 model.fit(X, Y, epochs=200, verbose=0)
 
-# Test prediction
-print("Prediction for x=10:", model.predict([10.0]))
+# Prediction
+print("Prediction for x=10:", model.predict(np.array([10.0])))
+
 
 
 import torch
@@ -37,16 +38,15 @@ optimizer = optim.SGD(model.parameters(), lr=0.01)
 
 # Training loop
 for epoch in range(200):
-    # Forward pass
-    outputs = model(X)
-    loss = criterion(outputs, Y)
+    outputs = model(X)            # forward pass
+    loss = criterion(outputs, Y)  # compute loss
     
-    # Backward pass and optimization
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
+    optimizer.zero_grad()  # clear gradients
+    loss.backward()        # backpropagation
+    optimizer.step()       # update weights
 
-# Test prediction
+# Prediction
 with torch.no_grad():
     prediction = model(torch.tensor([[10.0]]))
     print("Prediction for x=10:", prediction.item())
+
