@@ -1,0 +1,52 @@
+import tensorflow as tf
+import numpy as np
+
+# Training data: y = 2x + 1
+X = np.array([1, 2, 3, 4, 5], dtype=float)
+Y = np.array([3, 5, 7, 9, 11], dtype=float)
+
+# Build a simple model
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(units=1, input_shape=[1])
+])
+
+# Compile the model
+model.compile(optimizer='sgd', loss='mean_squared_error')
+
+# Train the model
+model.fit(X, Y, epochs=200, verbose=0)
+
+# Test prediction
+print("Prediction for x=10:", model.predict([10.0]))
+
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Training data: y = 2x + 1
+X = torch.tensor([[1.0], [2.0], [3.0], [4.0], [5.0]])
+Y = torch.tensor([[3.0], [5.0], [7.0], [9.0], [11.0]])
+
+# Define a simple linear regression model
+model = nn.Linear(1, 1)
+
+# Loss and optimizer
+criterion = nn.MSELoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01)
+
+# Training loop
+for epoch in range(200):
+    # Forward pass
+    outputs = model(X)
+    loss = criterion(outputs, Y)
+    
+    # Backward pass and optimization
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+# Test prediction
+with torch.no_grad():
+    prediction = model(torch.tensor([[10.0]]))
+    print("Prediction for x=10:", prediction.item())
