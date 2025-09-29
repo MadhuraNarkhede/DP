@@ -1,0 +1,47 @@
+import tensorflow as tf
+from tensorflow.keras.datasets import cifar10
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.utils import to_categorical
+
+# Load CIFAR-10 dataset
+(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+
+# Normalize pixel values (0–255 → 0–1)
+x_train = x_train / 255.0
+x_test = x_test / 255.0
+
+# One-hot encode labels (0–9 → 10 classes)
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
+
+model = Sequential([
+    Flatten(input_shape=(32, 32, 3)),       # Flatten 32x32x3 → 3072
+    Dense(512, activation='relu'),          # Hidden layer 1
+    Dense(256, activation='relu'),          # Hidden layer 2
+    Dense(128, activation='relu'),          # Hidden layer 3
+    Dense(10, activation='softmax')         # Output layer (10 classes)
+])
+
+model.compile(optimizer='adam',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+
+history = model.fit(x_train, y_train,
+                    epochs=10,
+                    batch_size=128,
+                    validation_data=(x_test, y_test))
+
+test_loss, test_acc = model.evaluate(x_test, y_test, verbose=0)
+print(f"Test Accuracy: {test_acc*100:.2f}%")
+
+import numpy as np
+
+# Pick one test image
+sample = x_test[0].reshape(1, 32, 32, 3)
+prediction = model.predict(sample)
+
+print("Predicted Class:", np.argmax(prediction))
+print("Actual Class:", np.argmax(y_test[0]))
+
